@@ -1,0 +1,162 @@
+!DOCTYPE html
+html lang=fr
+head
+meta charset=UTF-8
+meta name=viewport content=width=device-width, initial-scale=1.0
+titleQuiz Dragon Balltitle
+style
+   { box-sizing border-box; margin 0; padding 0; }
+  body {
+    font-family 'Segoe UI', Arial, sans-serif;
+    min-height 100vh;
+    display flex; align-items center; justify-content center;
+    background radial-gradient(circle at 50% 0%, #ff8c00 0%, #ff4d00 35%, #7a1500 70%, #1a0500 100%);
+    padding 20px;
+    color #fff;
+  }
+  .card {
+    background rgba(20, 8, 0, 0.88);
+    border 3px solid #ffb300;
+    border-radius 18px;
+    box-shadow 0 0 40px rgba(255, 179, 0, 0.5);
+    max-width 640px; width 100%;
+    padding 30px;
+  }
+  h1 {
+    text-align center; font-size 1.8rem; color #ffcc33;
+    text-shadow 0 0 12px #ff6a00; margin-bottom 6px;
+    text-transform uppercase; letter-spacing 1px;
+  }
+  .sub { text-align center; color #ffd98a; font-size .85rem; margin-bottom 22px; }
+  .bar { height 8px; background #3d1f00; border-radius 10px; overflow hidden; margin-bottom 8px; }
+  .bar  div { height 100%; width 0; background linear-gradient(90deg, #ffb300, #ff4d00); transition width .3s; }
+  .meta { display flex; justify-content space-between; font-size .8rem; color #ffcc66; margin-bottom 20px; }
+  .question { font-size 1.15rem; font-weight 600; margin-bottom 18px; line-height 1.4; }
+  .opt {
+    display block; width 100%; text-align left;
+    background #2a1200; border 2px solid #6b3300;
+    color #ffe9c4; padding 14px 16px; margin-bottom 10px;
+    border-radius 10px; font-size 1rem; cursor pointer;
+    transition all .15s;
+  }
+  .opthovernot(disabled) { border-color #ffb300; background #3d1c00; transform translateX(4px); }
+  .optdisabled { cursor default; }
+  .opt.correct { background #0f4d1c; border-color #38d95c; color #b6ffca; }
+  .opt.wrong { background #4d0f18; border-color #ff3b5c; color #ffb6c1; }
+  .feedback { margin-top 10px; font-size .9rem; min-height 22px; font-weight 600; }
+  .next {
+    display none; width 100%; margin-top 16px; padding 14px;
+    background linear-gradient(135deg, #ffb300, #ff4d00);
+    border none; border-radius 10px; color #2a0f00;
+    font-size 1rem; font-weight 700; cursor pointer; text-transform uppercase;
+  }
+  .nexthover { filter brightness(1.1); }
+  .result { text-align center; }
+  .result h2 { font-size 2rem; color #ffcc33; text-shadow 0 0 14px #ff6a00; margin-bottom 10px; }
+  .score { font-size 3.2rem; font-weight 800; color #fff; text-shadow 0 0 18px #ff8c00; }
+  .rank { font-size 1.2rem; margin 14px 0 22px; color #ffd98a; }
+  .restart {
+    padding 14px 34px; border none; border-radius 10px;
+    background linear-gradient(135deg, #ffb300, #ff4d00);
+    color #2a0f00; font-weight 700; font-size 1rem; cursor pointer; text-transform uppercase;
+  }
+  .restarthover { filter brightness(1.1); }
+style
+head
+body
+div class=card id=appdiv
+
+script
+const QUESTIONS = [
+  { q Quel est le vrai nom de Son Goku , o [Kakarot, Bardock, Raditz], a 0 },
+  { q Qui a détruit la planète Vegeta , o [Freezer, Cell, Boo], a 0 },
+  { q Combien y a-t-il de Dragon Balls sur Terre , o [5, 7, 9], a 1 },
+  { q Quel est le nom du fils aîné de Goku , o [Goten, Trunks, Gohan], a 2 },
+  { q Qui est le prince des Saiyans , o [Vegeta, Nappa, Broly], a 0 },
+  { q Quel personnage est le dieu de la destruction de l'univers 7 , o [Beerus, Whis, Champa], a 0 },
+  { q Quelle transformation Goku atteint-il pour la première fois contre Freezer , o [Super Saiyan 2, Super Saiyan, Super Saiyan God], a 1 },
+  { q Quel est le nom de l'ange attaché à Beerus , o [Vados, Whis, Zeno], a 1 },
+  { q Qui entraîne Gohan à devenir plus fort dans l'arc Saiyan de DBZ , o [Piccolo, Krilin, Tortue Géniale], a 0 },
+  { q Quel est le vrai nom de Tortue Géniale , o [Kamé Sennin, Kaio Sama, Mutaito], a 0 },
+  { q Contre qui Goku utilise-t-il le Genkidama pour la première fois dans DBZ , o [Vegeta, Freezer, Cell], a 0 },
+  { q Quel univers remporte le Tournoi du Pouvoir , o [Univers 7, Univers 11, Univers 6], a 0 },
+  { q Quel est le nom de la fusion entre Goku et Vegeta (méthode Metamoru) , o [Gogeta, Gotenks, Kibitoshin], a 0 },
+  { q Comment Goku apprend-il la téléportation , o [Seul sur Yardrat, Avec le Grand Kai, Avec Whis], a 0 },
+  { q Quel personnage est le père de Trunks , o [Goku, Vegeta, Yamcha], a 1 },
+  { q Quelle transformation majeure est introduite dans Dragon Ball Super , o [Ultra Instinct, Super Saiyan 4, Super Saiyan 3], a 0 },
+  { q Qui est le roi de tout (Omni-King) , o [Zeno, Grand Prêtre, Beerus], a 0 },
+  { q Quel est le dieu de la destruction jumeau de Beerus , o [Champa, Rumsshi, Belmod], a 0 },
+  { q Dans l'arc Univers 6 vs 7, quel adversaire redoutable Goku affronte-t-il , o [Hit, Jiren, Toppo], a 0 },
+  { q Quel androïde créé par le Dr Gero absorbe les autres , o [Cell, C-17, C-18], a 0 }
+];
+
+const app = document.getElementById('app');
+let idx = 0, score = 0, locked = false;
+
+function render() {
+  if (idx = QUESTIONS.length) return renderResult();
+  locked = false;
+  const q = QUESTIONS[idx];
+  const pct = (idx  QUESTIONS.length)  100;
+
+  app.innerHTML = `
+    h1🐉 Quiz Dragon Ballh1
+    div class=subDragon Ball · DBZ · Dragon Ball Superdiv
+    div class=bardiv style=width${pct}%divdiv
+    div class=metaspanQuestion ${idx + 1}  ${QUESTIONS.length}spanspanScore  ${score}spandiv
+    div class=question${q.q}div
+    div id=opts
+      ${q.o.map((t, i) = `button class=opt data-i=${i}${String.fromCharCode(65 + i)}. ${t}button`).join('')}
+    div
+    div class=feedback id=fbdiv
+    button class=next id=next${idx === QUESTIONS.length - 1  'Voir le résultat'  'Question suivante'}button
+  `;
+
+  document.querySelectorAll('.opt').forEach(btn = {
+    btn.addEventListener('click', () = choose(parseInt(btn.dataset.i)));
+  });
+  document.getElementById('next').addEventListener('click', () = { idx++; render(); });
+}
+
+function choose(i) {
+  if (locked) return;
+  locked = true;
+  const q = QUESTIONS[idx];
+  const btns = document.querySelectorAll('.opt');
+  btns.forEach((b, j) = {
+    b.disabled = true;
+    if (j === q.a) b.classList.add('correct');
+    else if (j === i) b.classList.add('wrong');
+  });
+  const fb = document.getElementById('fb');
+  if (i === q.a) { score++; fb.style.color = '#38d95c'; fb.textContent = '✔ Bonne réponse ! +1'; }
+  else { fb.style.color = '#ff8c9c'; fb.textContent = '✘ Raté. La bonne réponse était ' + String.fromCharCode(65 + q.a) + '.'; }
+  document.getElementById('next').style.display = 'block';
+}
+
+function renderResult() {
+  const total = QUESTIONS.length;
+  let rank = '';
+  if (score === total) rank = 'Légendaire — niveau Super Saiyan God !';
+  else if (score = 16) rank = 'Excellent — tu maîtrises ton ki !';
+  else if (score = 11) rank = 'Bien — encore un peu d'entraînement à la Capsule Corp.';
+  else if (score = 6) rank = 'Passable — retourne à la Tour Karin.';
+  else rank = 'Débutant — file t'entraîner avec Tortue Géniale !';
+
+  app.innerHTML = `
+    div class=result
+      h2Résultath2
+      div class=score${score}  ${total}div
+      div class=rank${rank}div
+      button class=restart id=restartRejouerbutton
+    div
+  `;
+  document.getElementById('restart').addEventListener('click', () = {
+    idx = 0; score = 0; render();
+  });
+}
+
+render();
+script
+body
+html
